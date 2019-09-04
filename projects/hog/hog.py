@@ -127,15 +127,14 @@ def play(strategy0, strategy1, score0=0, score1=0, dice=six_sided,
             num_rolls = strategy0(score0, score1)
             score0 += take_turn(num_rolls, score1, dice)
             ## Whether use feral_hogs rule
-            if feral_hogs and (num_rolls == pre_rolls0 + 2 or num_rolls == pre_rolls0 - 2):
+            if feral_hogs and abs(num_rolls - pre_rolls0) == 2:
                 score0 += 3
             pre_rolls0 = num_rolls
         else:
             num_rolls = strategy1(score1, score0)
             score1 += take_turn(num_rolls, score0, dice)
-
             ## Whether use feral_hogs rule
-            if feral_hogs and (num_rolls == pre_rolls1 + 2 or num_rolls == pre_rolls1 - 2):
+            if feral_hogs and abs(num_rolls - pre_rolls1) == 2:
                 score1 += 3
             pre_rolls1 = num_rolls
 
@@ -143,6 +142,8 @@ def play(strategy0, strategy1, score0=0, score1=0, dice=six_sided,
             score0, score1 = score1, score0
 
         player = other(player)
+        
+        say = say(score0, score1)
     # END PROBLEM 5
     # (note that the indentation for the problem 6 prompt (***YOUR CODE HERE***) might be misleading)
     # BEGIN PROBLEM 6
@@ -231,8 +232,29 @@ def announce_highest(who, previous_high=0, previous_score=0):
     55 point(s)! That's the biggest gain yet for Player 1
     """
     assert who == 0 or who == 1, 'The who argument should indicate a player.'
+    
+    ph = previous_high
+    ps = previous_score
     # BEGIN PROBLEM 7
     "*** YOUR CODE HERE ***"
+    def say(score0, score1):
+        if who == 0:
+            score = score0
+        else:
+            score = score1
+        
+        dscore = score - ps
+        if dscore > ph:
+            previous_high = dscore
+            print(f"{dscore} point(s)! That's the biggest gain yet for Player {who}")
+        else:
+            previous_high = ph
+        
+        previous_score = score
+        
+        return announce_highest(who, previous_high, previous_score)
+    
+    return say
     # END PROBLEM 7
 
 
