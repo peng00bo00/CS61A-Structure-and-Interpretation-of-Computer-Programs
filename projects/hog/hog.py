@@ -232,11 +232,12 @@ def announce_highest(who, previous_high=0, previous_score=0):
     55 point(s)! That's the biggest gain yet for Player 1
     """
     assert who == 0 or who == 1, 'The who argument should indicate a player.'
-    
-    ph = previous_high
-    ps = previous_score
+
     # BEGIN PROBLEM 7
     "*** YOUR CODE HERE ***"
+    ph = previous_high
+    ps = previous_score
+    
     def say(score0, score1):
         if who == 0:
             score = score0
