@@ -71,16 +71,21 @@ def is_swap(player_score, opponent_score):
     """
     # BEGIN PROBLEM 4
     "*** YOUR CODE HERE ***"
-    player_head = eval(str(player_score)[0])
-    player_tail = eval(str(player_score)[-1])
-
-    opponent_head = eval(str(opponent_score)[0])
-    opponent_tail = eval(str(opponent_score)[-1])
-
-    if player_head * player_tail == opponent_head * opponent_tail:
-        return True
+    player_tail = player_score % 10
     
-    return False
+    player_head = player_score
+    while (player_score // 10) > 0:
+        player_head = player_score // 10
+        player_score = player_score // 10
+
+    opponent_tail = opponent_score % 10
+    
+    opponent_head = opponent_score
+    while (opponent_score // 10) > 0:
+        opponent_head = opponent_score // 10
+        opponent_score = opponent_score // 10
+
+    return player_head * player_tail == opponent_head * opponent_tail
     # END PROBLEM 4
 
 
@@ -295,6 +300,9 @@ def make_averaged(fn, num_samples=1000):
     """
     # BEGIN PROBLEM 8
     "*** YOUR CODE HERE ***"
+    def average(*args):
+        return sum([fn(*args) for _ in range(num_samples)]) / num_samples
+    return average
     # END PROBLEM 8
 
 
@@ -309,6 +317,13 @@ def max_scoring_num_rolls(dice=six_sided, num_samples=1000):
     """
     # BEGIN PROBLEM 9
     "*** YOUR CODE HERE ***"
+    averages = [make_averaged(roll_dice, num_samples)(i, dice) for i in range(1, 11)]
+    max_return = max(averages)
+    i = 0
+    for average in averages:
+        i += 1
+        if average == max_return:
+            return i
     # END PROBLEM 9
 
 
@@ -357,7 +372,9 @@ def bacon_strategy(score, opponent_score, margin=8, num_rolls=4):
     rolls NUM_ROLLS otherwise.
     """
     # BEGIN PROBLEM 10
-    return 4  # Replace this statement
+    if free_bacon(opponent_score) >= margin:
+        return 0
+    return num_rolls
     # END PROBLEM 10
 
 
@@ -367,7 +384,15 @@ def swap_strategy(score, opponent_score, margin=8, num_rolls=4):
     non-beneficial swap. Otherwise, it rolls NUM_ROLLS.
     """
     # BEGIN PROBLEM 11
-    return 4  # Replace this statement
+    dscore = free_bacon(opponent_score)
+    if is_swap(score+dscore, opponent_score):
+        if opponent_score > (score + dscore):
+            return 0
+        dscore = opponent_score - score
+    if dscore >= margin:
+        return 0
+    
+    return num_rolls
     # END PROBLEM 11
 
 
@@ -377,7 +402,44 @@ def final_strategy(score, opponent_score):
     *** YOUR DESCRIPTION HERE ***
     """
     # BEGIN PROBLEM 12
-    return 4  # Replace this statement
+    dscore = free_bacon(opponent_score)
+    if score < 10:
+        return swap_strategy(score, opponent_score)
+    elif score + dscore >= 100:
+        return 0
+    elif score >= 90:
+        return 2
+    elif score < opponent_score:
+        if is_swap(score + dscore, opponent_score):
+            if opponent_score - score > 10:
+                return 0
+            else:
+                n = 0
+                while (score + n) < opponent_score // 2:
+                    if opponent_score % (score + n) == 0:
+                        if 1 <= n <= 6:
+                            return 1
+                        elif 7 <= n <= 8:
+                            return 2
+                        elif 9 <= n <= 12:
+                            return 3
+                        else:
+                            return 4
+                    n += 1
+                else:
+                    return 4
+        elif opponent_score >= 90 and opponent_score - score > 50:
+            return 10
+        else:
+            return 4
+    elif score > opponent_score:
+        if score - opponent_score > 40:
+            return 3
+        elif is_swap(score + dscore, opponent_score):
+            return 4
+        else:
+            return 4
+    return 4
     # END PROBLEM 12
 
 
