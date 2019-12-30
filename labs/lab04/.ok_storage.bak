@@ -1,0 +1,7 @@
+'skip_add-correct', (0, 70)
+'summation-correct', (512, 70)
+'gcd-correct', (1024, 70)
+'couple-correct', (1536, 70)
+'ten_pairs-correct', (2048, 70)
+'key_of_min_value-correct', (2560, 70)
+'squares-correct', (3072, 70)
